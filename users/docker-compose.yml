@@ -1,0 +1,14 @@
+#for test
+version: "3"
+services:
+  postgresdb:
+    image: postgres:11.7
+    container_name: postgres
+    environment:
+      POSTGRES_USER: haxul
+      POSTGRES_PASSWORD: haxul
+      POSTGRES_DB: usersdb
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+    restart: always
