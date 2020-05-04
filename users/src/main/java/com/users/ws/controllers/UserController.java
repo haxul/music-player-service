@@ -1,15 +1,27 @@
 package com.users.ws.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.users.ws.entities.UserEntity;
+import com.users.ws.models.RegisterRequest;
+import com.users.ws.services.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
+
+    private final UserService userService;
 
     @GetMapping
     public String test() {
         return "HELLO WORLD";
+    }
+
+    @PostMapping("/register")
+    public UserEntity register(@RequestBody @Valid RegisterRequest request) {
+        return userService.createUser(request);
     }
 }
