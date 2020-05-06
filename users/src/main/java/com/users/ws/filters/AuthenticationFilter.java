@@ -1,8 +1,10 @@
 package com.users.ws.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.users.ws.entities.SmsAuthCode;
 import com.users.ws.entities.UserEntity;
 import com.users.ws.models.LoginRequest;
+import com.users.ws.repositories.SmsAuthCodeRepository;
 import com.users.ws.services.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -30,10 +32,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private UserService userService;
     private Environment environment;
+    private SmsAuthCodeRepository smsAuthCodeRepository;
 
-    public AuthenticationFilter(UserService userService, AuthenticationManager authenticationManager, Environment environment) {
+    public AuthenticationFilter(UserService userService, AuthenticationManager authenticationManager, Environment environment, SmsAuthCodeRepository smsAuthCodeRepository) {
         this.userService = userService;
         this.environment = environment;
+        this.smsAuthCodeRepository = smsAuthCodeRepository;
         super.setAuthenticationManager(authenticationManager);
     }
 
@@ -53,7 +57,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserEntity user = userService.findUserByUsername(username);
-
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(environment.getProperty("token.salt"));
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());

@@ -1,6 +1,7 @@
 package com.users.ws.configurations;
 
 import com.users.ws.filters.AuthenticationFilter;
+import com.users.ws.repositories.SmsAuthCodeRepository;
 import com.users.ws.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Environment environment;
+    private final SmsAuthCodeRepository smsAuthCodeRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(userService, authenticationManager(), environment);
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(userService, authenticationManager(), environment, smsAuthCodeRepository);
         return authenticationFilter;
     }
 
