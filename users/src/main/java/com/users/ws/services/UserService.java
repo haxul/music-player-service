@@ -1,9 +1,11 @@
 package com.users.ws.services;
 
+import com.users.ws.dto.UserDto;
 import com.users.ws.entities.UserEntity;
 import com.users.ws.models.RegisterRequest;
 import com.users.ws.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,15 +21,16 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ModelMapper modelMapper;
 
-    public UserEntity createUser(RegisterRequest request) {
+    public UserDto createUser(RegisterRequest request) {
         UserEntity userEntity = new UserEntity();
         userEntity.setName(request.getName());
         userEntity.setUsername(request.getUsername());
         userEntity.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         userEntity.setSurname(request.getSurname());
         userRepository.save(userEntity);
-        return userEntity;
+        return modelMapper.map(userEntity, UserDto.class);
     }
 
     @Override

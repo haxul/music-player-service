@@ -2,8 +2,7 @@ package com.users.ws.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -26,11 +25,12 @@ public class UserEntity {
 
     @Column(name = "name")
     private String name;
+
     @Column(name = "surname")
     private String surname;
 
     @Column(name = "registered")
     @Temporal(TemporalType.DATE)
-    @CreatedDate
+    @CreationTimestamp
     private Date date;
 }

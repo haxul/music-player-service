@@ -1,6 +1,6 @@
 package com.users.ws.controllers;
 
-import com.users.ws.entities.UserEntity;
+import com.users.ws.dto.UserDto;
 import com.users.ws.models.RegisterRequest;
 import com.users.ws.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserEntity register(@RequestBody @Valid RegisterRequest request) {
+    public UserDto register(@RequestBody @Valid RegisterRequest request) {
         return userService.createUser(request);
     }
 }
