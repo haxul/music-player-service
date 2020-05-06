@@ -2,6 +2,7 @@ package com.users.ws.services;
 
 import com.users.ws.dto.UserDto;
 import com.users.ws.entities.UserEntity;
+import com.users.ws.exceptions.UserExistsException;
 import com.users.ws.models.RegisterRequest;
 import com.users.ws.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class UserService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     public UserDto createUser(RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()) != null) throw new UserExistsException();
         UserEntity userEntity = new UserEntity();
         userEntity.setName(request.getName());
         userEntity.setUsername(request.getUsername());
