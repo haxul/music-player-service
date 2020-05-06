@@ -19,7 +19,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler(value = {UserExistsException.class})
     public ResponseEntity<Object> handleAnyException(Exception ex, WebRequest request) {
-        ErrorMessage message = new ErrorMessage("Error","User with username like this exists");
+        ErrorMessage message = new ErrorMessage("Error","User having username like this exists");
         return new ResponseEntity<>(message, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 }
