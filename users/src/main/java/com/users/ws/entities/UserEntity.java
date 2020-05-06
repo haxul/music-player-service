@@ -33,4 +33,7 @@ public class UserEntity {
     @Temporal(TemporalType.DATE)
     @CreationTimestamp
     private Date date;
+
+    @Column(name = "is_blocked")
+    private Boolean isBlocked = false;
 }
