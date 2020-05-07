@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -57,6 +58,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserEntity user = userService.findUserByUsername(username);
+
+        createSmsAuth(user); // save sms in db
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(environment.getProperty("token.salt"));
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
@@ -68,5 +72,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         response.addHeader("token", token);
         response.addHeader("userId", String.valueOf(user.getId()));
+    }
+
+    private void createSmsAuth(UserEntity user) {
+        Random random = new Random();
+        final int upperBound = 10;
+        String code = "";
+        for (int i = 0; i < 4; i++) {
+            code += String.valueOf(random.nextInt(upperBound));
+        }
+        SmsAuthCode curCode = smsAuthCodeRepository.findByUser(user);
+        if (curCode == null) smsAuthCodeRepository.save(new SmsAuthCode(code, user));
+        else {
+            curCode.setCode(code);
+            smsAuthCodeRepository.save(curCode);
+        }
     }
 }

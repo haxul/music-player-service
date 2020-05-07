@@ -1,6 +1,7 @@
 package com.users.ws.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Table(name = "sms_auth_codes")
+@NoArgsConstructor
 public class SmsAuthCode {
 
     @Id
