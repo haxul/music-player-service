@@ -33,12 +33,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private UserService userService;
     private Environment environment;
-    private SmsAuthCodeRepository smsAuthCodeRepository;
+//    private SmsAuthCodeRepository smsAuthCodeRepository;
 
     public AuthenticationFilter(UserService userService, AuthenticationManager authenticationManager, Environment environment, SmsAuthCodeRepository smsAuthCodeRepository) {
         this.userService = userService;
         this.environment = environment;
-        this.smsAuthCodeRepository = smsAuthCodeRepository;
+//        this.smsAuthCodeRepository = smsAuthCodeRepository;
         super.setAuthenticationManager(authenticationManager);
     }
 
@@ -59,7 +59,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserEntity user = userService.findUserByUsername(username);
 
-        createSmsAuth(user); // save sms in db
+//        createSmsAuth(user); // save sms in db
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(environment.getProperty("token.salt"));
@@ -74,18 +74,18 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("userId", String.valueOf(user.getId()));
     }
 
-    private void createSmsAuth(UserEntity user) {
-        Random random = new Random();
-        final int upperBound = 10;
-        String code = "";
-        for (int i = 0; i < 4; i++) {
-            code += String.valueOf(random.nextInt(upperBound));
-        }
-        SmsAuthCode curCode = smsAuthCodeRepository.findByUser(user);
-        if (curCode == null) smsAuthCodeRepository.save(new SmsAuthCode(code, user));
-        else {
-            curCode.setCode(code);
-            smsAuthCodeRepository.save(curCode);
-        }
-    }
+//    private void createSmsAuth(UserEntity user) {
+//        Random random = new Random();
+//        final int upperBound = 10;
+//        String code = "";
+//        for (int i = 0; i < 4; i++) {
+//            code += String.valueOf(random.nextInt(upperBound));
+//        }
+//        SmsAuthCode curCode = smsAuthCodeRepository.findByUser(user);
+//        if (curCode == null) smsAuthCodeRepository.save(new SmsAuthCode(code, user));
+//        else {
+//            curCode.setCode(code);
+//            smsAuthCodeRepository.save(curCode);
+//        }
+//    }
 }
