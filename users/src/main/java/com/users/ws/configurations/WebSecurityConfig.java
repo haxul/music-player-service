@@ -24,7 +24,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Environment environment;
-    private final SmsAuthCodeRepository smsAuthCodeRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(userService, authenticationManager(), environment, smsAuthCodeRepository);
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(userService, authenticationManager(), environment);
         return authenticationFilter;
     }
 
