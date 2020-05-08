@@ -33,10 +33,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users/").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
-                .antMatchers("/users/sms/").hasRole("PRE_AUTH_USER")
-                .antMatchers("/**").hasRole("REGISTER_USER")
+                .antMatchers(HttpMethod.POST, "/users-ws/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/users-ws/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(getAuthenticationFilter())
@@ -46,7 +44,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(userService, authenticationManager(), environment);
-        authenticationFilter.setFilterProcessesUrl("/users/login");
+        authenticationFilter.setFilterProcessesUrl("/users-ws/login");
         return authenticationFilter;
     }
     @Override
