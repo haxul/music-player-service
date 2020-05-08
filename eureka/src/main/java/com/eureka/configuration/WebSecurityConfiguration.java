@@ -1,19 +1,21 @@
 package com.eureka.configuration;
 
-import com.eureka.repositories.UserRepository;
 import com.eureka.security.AuthenticationFilter;
 import com.eureka.security.AuthorizationFilter;
 import com.eureka.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -23,14 +25,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final Environment environment;
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/*/")
+                .antMatchers("/eureka/**")
+                .antMatchers(HttpMethod.OPTIONS, "/**");
+    }
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests().
                 antMatchers(HttpMethod.POST, "/users/").permitAll().
                 antMatchers(HttpMethod.POST, "/users/login").permitAll().
                 antMatchers("/users/sms/").hasRole("PRE_AUTH_USER").
-                antMatchers("/**").hasRole("AUTH_USER").
                 anyRequest().authenticated().
-                and().
+                and().httpBasic().and().
                 addFilter(getAuthenticationFilter()).
                 addFilter(new AuthorizationFilter(authenticationManager(), environment));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
