@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.SneakyThrows;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,9 +29,10 @@ import java.util.Date;
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private UserService userService;
-
-    public AuthenticationFilter(UserService userService, AuthenticationManager authenticationManager) {
+    private Environment environment;
+    public AuthenticationFilter(UserService userService, AuthenticationManager authenticationManager, Environment environment) {
         this.userService = userService;
+        this.environment = environment;
         super.setAuthenticationManager(authenticationManager);
     }
 
@@ -51,12 +53,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         UserEntity user = userService.findUserByUsername(username);
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("salt");
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(environment.getProperty("token.salt"));
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         String token = Jwts.builder().
                 setSubject(String.valueOf(user.getId())).
-                setExpiration(new Date(System.currentTimeMillis() + Long.parseLong("10000000"))).
+                setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("token.expiration")))).
                 signWith(signatureAlgorithm, signingKey).compact();
 
         response.addHeader("token", token);

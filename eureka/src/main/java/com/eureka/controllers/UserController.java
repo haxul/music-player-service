@@ -22,7 +22,12 @@ public class UserController {
 
     @GetMapping
     public String test(Authentication authentication) {
-        return  "Hello, id=" + String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return  "Hello, id=" + String.valueOf(SecurityContextHolder.getContext().getAuthentication());
 
+    }
+
+    @GetMapping("/sms/")
+    public String test2(Authentication authentication){
+        return "SMS";
     }
 }

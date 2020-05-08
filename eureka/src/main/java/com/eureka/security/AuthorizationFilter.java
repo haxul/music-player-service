@@ -1,9 +1,11 @@
 package com.eureka.security;
 
-import com.eureka.exceptions.ForbiddenException;
+import com.eureka.repositories.UserRepository;
 import io.jsonwebtoken.Jwts;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -14,11 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
-    public AuthorizationFilter(AuthenticationManager authenticationManager) {
+    private Environment environment;
+    public AuthorizationFilter(AuthenticationManager authenticationManager, Environment environment) {
         super(authenticationManager);
+        this.environment = environment;
     }
 
     @Override
@@ -39,10 +44,16 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             if (authorizationHeader == null) return null;
             String token = authorizationHeader.replace("Bearer ", "");
             String userId = Jwts.parser().
-                    setSigningKey(DatatypeConverter.parseBase64Binary("salt")).
+                    setSigningKey(DatatypeConverter.parseBase64Binary(environment.getProperty("token.salt"))).
                     parseClaimsJws(token).getBody().getSubject();
             if (userId == null) return null;
-            return new UsernamePasswordAuthenticationToken(Integer.valueOf(userId), null, new ArrayList<>());
+
+
+            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_PRE_AUTH_USER");
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(simpleGrantedAuthority);
+
+            return new UsernamePasswordAuthenticationToken(Integer.valueOf(userId), null,authorities);
         } catch (Exception e) {
             return null;
         }
