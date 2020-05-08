@@ -1,6 +1,9 @@
 package com.eureka.security;
 
+import com.eureka.entities.RoleEntity;
 import com.eureka.repositories.UserRepository;
+import com.eureka.services.UserService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +24,7 @@ import java.util.List;
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private Environment environment;
+
     public AuthorizationFilter(AuthenticationManager authenticationManager, Environment environment) {
         super(authenticationManager);
         this.environment = environment;
@@ -43,16 +47,18 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader == null) return null;
             String token = authorizationHeader.replace("Bearer ", "");
-            String userId = Jwts.parser().
+            Claims claims = Jwts.parser().
                     setSigningKey(DatatypeConverter.parseBase64Binary(environment.getProperty("token.salt"))).
-                    parseClaimsJws(token).getBody().getSubject();
+                    parseClaimsJws(token).getBody();
+            String userId = claims.getSubject();
             if (userId == null) return null;
-
-
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_PRE_AUTH_USER");
+            String[] roles = claims.get("roles", String.class).split(",");
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(simpleGrantedAuthority);
-
+            for (var role : roles) {
+                String roleWithPrefix = "ROLE_" + role;
+                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleWithPrefix);
+                authorities.add(simpleGrantedAuthority);
+            }
             return new UsernamePasswordAuthenticationToken(Integer.valueOf(userId), null,authorities);
         } catch (Exception e) {
             return null;

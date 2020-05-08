@@ -26,7 +26,7 @@ public class UserEntity {
     @Column(name = "is_enable")
     private Boolean isEnable = true;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(

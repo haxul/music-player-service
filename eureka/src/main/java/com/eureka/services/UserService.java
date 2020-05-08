@@ -57,4 +57,5 @@ public class UserService implements UserDetailsService {
         if (userEntity == null) throw  new UsernameNotFoundException(username);
         return userEntity;
     }
+
 }

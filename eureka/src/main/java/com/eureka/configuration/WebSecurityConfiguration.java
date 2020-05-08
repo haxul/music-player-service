@@ -32,14 +32,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().
-                antMatchers(HttpMethod.POST, "/users/").permitAll().
-                antMatchers(HttpMethod.POST, "/users/login").permitAll().
-                antMatchers("/users/sms/").hasRole("PRE_AUTH_USER").
-                anyRequest().authenticated().
-                and().httpBasic().and().
-                addFilter(getAuthenticationFilter()).
-                addFilter(new AuthorizationFilter(authenticationManager(), environment));
+        http.csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/users/").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
+                .antMatchers("/users/sms/").hasRole("PRE_AUTH_USER")
+                .antMatchers("/**").hasRole("REGISTER_USER")
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(getAuthenticationFilter())
+                .addFilter(new AuthorizationFilter(authenticationManager(), environment));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -55,9 +56,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(environment.getProperty("token.salt"));
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-
+        String roles =user.getRoles().stream().map(e->e.getName()).collect(Collectors.joining(","));
         String token = Jwts.builder().
                 setSubject(String.valueOf(user.getId())).
+                claim("roles", roles).
                 setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("token.expiration")))).
                 signWith(signatureAlgorithm, signingKey).compact();
 

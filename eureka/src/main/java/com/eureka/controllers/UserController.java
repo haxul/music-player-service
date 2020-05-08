@@ -20,7 +20,7 @@ public class UserController {
         return userService.createUser(request);
     }
 
-    @GetMapping
+    @GetMapping("/hello/")
     public String test(Authentication authentication) {
         return  "Hello, id=" + String.valueOf(SecurityContextHolder.getContext().getAuthentication());
 
