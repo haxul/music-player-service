@@ -22,5 +22,5 @@ class TrackEntity {
 
   @Field(value = "userList")
   @BeanProperty
-  var userIdList: Set[Int] = _
+  var userIdList: Set[Int] = Set()
 }
