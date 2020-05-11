@@ -40,11 +40,11 @@ public class AuthenticationEvents {
         if (token.getPrincipal().getClass() == String.class) {
             String name = (String) token.getPrincipal();
             log.setUsername(name);
-            log.setIsSuccessfulAuthentication(attempt.getAuthentication().isAuthenticated());
+            log.setIsSuccessfulAuthentication(false);
         } else {
             User user = (User) token.getPrincipal();
             log.setUsername(user.getUsername());
-            log.setIsSuccessfulAuthentication(attempt.getAuthentication().isAuthenticated());
+            log.setIsSuccessfulAuthentication(true);
         }
         return log;
     }
