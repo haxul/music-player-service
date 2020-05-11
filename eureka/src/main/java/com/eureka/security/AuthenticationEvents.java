@@ -1,7 +1,7 @@
 package com.eureka.security;
 
 
-import com.eureka.rabbitmq.SenderRabbitMq;
+import com.eureka.rabbitmq.QueueProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthenticationEvents {
 
-    private final SenderRabbitMq senderRabbitMq;
+    private final QueueProducer queueProducer;
 
     @EventListener
-    public void onSuccess(AuthenticationSuccessEvent success) {
-        senderRabbitMq.send();
+    public void onSuccess(AuthenticationSuccessEvent success) throws Exception {
         System.out.println("GOOD");
+        queueProducer.produce("Hello from users-ws");
     }
 
     @EventListener
