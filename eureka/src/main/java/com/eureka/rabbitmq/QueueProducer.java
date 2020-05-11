@@ -1,6 +1,7 @@
 package com.eureka.rabbitmq;
 
 
+import com.eureka.dto.LogAuthenticationDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class QueueProducer {
         super();
         this.rabbitTemplate = rabbitTemplate;
     }
-    public void produce(String message) throws Exception {
+    public void produce(LogAuthenticationDto log) throws Exception {
         rabbitTemplate.setExchange(fanoutExchange);
-        rabbitTemplate.convertAndSend(new ObjectMapper().writeValueAsString(message));
+        rabbitTemplate.convertAndSend(new ObjectMapper().writeValueAsString(log));
     }
 }

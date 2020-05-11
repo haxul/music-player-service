@@ -1,6 +1,7 @@
-package com.logs;
+package com.logs.rabbitmq;
 
 
+import com.logs.rabbitmq.QueueConsumer;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.FanoutExchange;
