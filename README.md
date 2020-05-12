@@ -15,5 +15,4 @@
     * Ereuka client
     * Spring (Boot, Data, MVC) based on Scala
     * MongoDb
-    * Spring (Boot) based Java
-    * RabbitMq
+ 
