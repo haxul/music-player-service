@@ -1,7 +1,7 @@
 
 ### Technologies:
 
-* User-ws:
+* Ereuka-ws:
     * Ereuka server
     * Zuul
     * Postgres
