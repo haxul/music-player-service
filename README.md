@@ -9,7 +9,7 @@
     * RabbitMq
 * Log-ws:
     * Ereuka client
-    * Spring (Boot) based on Java
+    * Spring (Boot, MVC) based on Java
     * RabbitMq
 * Track-ws
     * Ereuka client
